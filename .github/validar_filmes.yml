@@ -1,0 +1,29 @@
+name: Validar Sugestões de Filmes
+
+on:
+  push:
+    paths:
+      - 'sugestoes/*.json'
+  pull_request:
+    paths:
+      - 'sugestoes/*.json'
+
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt || true
+
+      - name: Rodar validador
+        run: |
+          for file in sugestoes/*.json; do
+            echo "Validando $file"
+            python src/validar_sugestoes.py "$file"
+          done
